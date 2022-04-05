@@ -2,8 +2,8 @@
 Shiny tutorial for PDEng trainees
 
 # Slides
-Slides for this tutorial can be found in this [link](https://azucenamv.github.io/shiny_tutorial/presentation/shiny_tutorial.html)
-It includes:
+Slides for this tutorial can be found in this [link](https://azucenamv.github.io/shiny_tutorial/presentation/shiny_tutorial.html)  
+Content:
   - Components: UI & Server
   - Inputs & Outputs
   - Server function
