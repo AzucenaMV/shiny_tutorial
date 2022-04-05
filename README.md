@@ -3,6 +3,17 @@ Shiny tutorial for PDEng trainees
 
 # Slides
 Slides for this tutorial can be found in this [link](https://azucenamv.github.io/shiny_tutorial/presentation/shiny_tutorial.html)
+It includes:
+  - Components: UI & Server
+  - Inputs & Outputs
+  - Server function
+  - Render functions
+  - Reactivity
+  - Ggplot2
+  - Publish your app
+  - Structure
+  - CSS, JS & Images
+  - Layout
 
 # Instructions
 To follow the excercises:
