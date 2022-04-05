@@ -77,7 +77,7 @@ knitr::include_graphics("images/hello-world-app.png")
 ```
 
 ---
-### Components
+### Components: UI & Server
 - User Interface (UI) section:  
         It is the HTML webpage that users will interact with (front end)
 
