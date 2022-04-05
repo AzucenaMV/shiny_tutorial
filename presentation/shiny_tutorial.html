@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Tech Meetup: Shiny</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Azucena MV" />
+    <meta name="date" content="2022-03-31" />
+    <script src="libs/header-attrs-2.12/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/rutgers-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Tech Meetup: Shiny
+### Azucena MV
+### 2022-03-31
+
+---
+
+
+&lt;style&gt;
+p.caption {
+  font-size: 0.6em;
+}
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+.tiny .remark-code {
+  font-size: .6em !important;
+}
+.small { font-size: 70% }
+&lt;/style&gt;
+
+
+
+
+# Shiny
+
+Shiny is an R package that makes it easy to build interactive web apps. It is an &lt;b&gt;easy&lt;/b&gt; but &lt;b&gt;powerful&lt;/b&gt; tool for web app development.
+
+
+### Advantages:
+- Knowledge of HTML, CSS, or JavaScript is not required
+- Rapid prototype 
+- Professional appearance
+- Easy customization
+- R graphs capabilities
+- Integration with existing pipelines
+
+
+---
+## Hello World!
+
+1. First install shiny library
+    
+    ```r
+    install.packages("shiny")
+    ```
+
+2. Create a file called app.R
+    
+    ```r
+    library(shiny) # This line loads the library
+    
+    ui &lt;- fluidPage( # Creates a dynamic HTML user interface
+      "Hello, world!" 
+    )
+    server &lt;- function(input, output, session) {
+      # The magic happens here
+    }
+    shinyApp(ui, server)
+    ```
+
+---
+### Result
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="images/hello-world-app.png" alt="My first shiny app." width="70%" /&gt;
+&lt;p class="caption"&gt;My first shiny app.&lt;/p&gt;
+&lt;/div&gt;
+
+---
+### Components
+- User Interface (UI) section:  
+        It is the HTML webpage that users will interact with (front end)
+
+- Server section:  
+        It tells shiny how the app will behave (back end)
+
+&lt;img src="images/server-ui.png" width="70%" style="display: block; margin: auto;" /&gt;
+---
+## Inputs &amp; Outputs
+
+* Input Controls:
+        Collect values from the user and allow the user to interact
+* Output Controls:
+        Display information to the user such as graphs, tables or text
+        
+&lt;img src="images/inputs-outputs.png" width="50%" style="display: block; margin: auto;" /&gt;
+        
+---
+## Inputs
+
+&lt;img src="images/inputs.png" width="100%" style="display: block; margin: auto;" /&gt;
+---
+## Inputs
+### Syntax
+
+```r
+ui &lt;- fluidPage(
+  sliderInput(
+    inputId = "num", # input name
+    label = "Choose a number", # label to display
+    value = 25, min = 1, max = 100 # other arguments
+    ) 
+)
+```
+### Behind the scenes
+
+```r
+&lt;div class="container-fluid"&gt;
+  &lt;div class="form-group shiny-input-container"&gt;
+    &lt;label class="control-label" id="num-label" for="num"&gt;Choose a number&lt;/label&gt;
+    &lt;input class="js-range-slider" id="num" data-skin="shiny" data-min="1" data-max="100" data-from="25" data-step="1" data-grid="true" data-grid-num="9.9" data-grid-snap="false" data-prettify-separator="," data-prettify-enabled="true" data-keyboard="true" data-data-type="number"/&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+```
+---
+## Outputs
+&lt;img src="images/outputs.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+## Outputs
+### Syntax
+
+```r
+ui &lt;- fluidPage(
+  plotOutput(
+    outputId = 'hist' # output name
+             )
+)
+```
+### Behind the scenes
+
+```r
+&lt;div id="hist" class="shiny-plot-output" style="width:100%;height:400px;"&gt;&lt;/div&gt;
+```
+---
+## Server function
+It builds as a list-like object named output that contains the code to update the objects in your app
+
+
+```r
+server &lt;- function(input, output) { 
+  output$hist &lt;- renderPlot({
+    # code to build your object
+  }) 
+}
+```
+
+1. Save your objects to display to output$&lt;outpudId&gt;
+2. Build objects to display with render functions
+3. Access your input values with input$&lt;inputId&gt;
+
+---
+## Render functions
+
+Builds reactive output to display in UI
+&lt;img src="images/render-functions.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+## Outputs &amp; Render Functions
+&lt;img src="images/render.png" width="100%" style="display: block; margin: auto;" /&gt;
+---
+## Reactivity
+When an input changes, the server will rebuild each output that depends on it (even if it is indirect).
+Reactivity automatically occurs whenever you use an input value to render an output object.  
+
+* Inputs
+        - Read an input inside reactive context
+        - Read-only
+
+* Output
+        - Use it with a render function (reactive context) to display 
+        - Not readable
+---
+## Reactivity Functions
+&lt;img src="images/summary.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+.small[
+.pull-left[
+**render*():**  
+        Builds an object to display
+
+**reactiveValues():**  
+        Creates a list of reactive values whose values you can set
+
+**isolate(**_expr_**):**   
+        Run a code block and returns a non-reactive copy of the results.
+]
+.pull-right[
+**observeEvent(**_arg1_,_arg2_**):**  
+        Runs code in arg2 whenever values in arg1 changes without returning an output
+
+**reactive(**_x_**):**  
+        Creates a reactive expression that can be called by other code
+
+**eventReactive(**_arg1_,arg2_**):**   
+        Creates reactive expression with code (arg2) that only invalidates when reactive values in arg1 change
+]
+]
+
+
+---
+## Reactivity: Example
+.pull-left[
+
+```r
+ui &lt;- fluidPage(
+  sliderInput(
+    inputId = "num", 
+    label = "Choose a number", 
+    value = 25, 
+    min = 1, 
+    max = 100 
+    ), 
+  plotOutput(outputId = 'hist')
+)
+
+server &lt;- function(input, output){
+  output$hist &lt;- renderPlot({
+    hist(rnorm(input$num))
+  })
+}
+shinyApp(ui, server)
+```
+]
+.pull-right[
+&lt;img src="images/example1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+---
+## Ggplot2 package
+
+- Data visualization package for R
+- Created by Hadley Wickham
+- Implementation of Leland Wilkinson's Grammar of Graphics
+
+&lt;img src="images/grammarofgraphics.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+---
+&lt;img src="images/ggplot-structure.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+## Ggplot2: Example
+.pull-left[
+.tiny[
+
+```r
+library(ggplot2)
+
+df &lt;- data.frame(x = rnorm(100))
+
+ggplot(data = df, aes(x = x)) + # Data &amp; Aesthetics
+  geom_histogram(
+    aes(y =..density..), 
+    bins = 9,
+    fill = 'steelblue',
+    color = 'white') + # Geometries
+  geom_vline(
+    xintercept= mean(df$x), 
+    color = 'gray', 
+    size = 2, linetype = 
+      "dashed") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 20)) + # Theme
+  ylab("Frequency") +
+  xlab("X label") +
+  ggtitle("Fancy plot title")
+```
+]
+]
+.pull-right[
+&lt;img src="shiny_tutorial_files/figure-html/unnamed-chunk-20-1.png" height="350" /&gt;
+]
+---
+## Your turn!
+Change the histogram graph in the app.
+
+---
+## Publish your app
+
+1. Create a free account at https://www.shinyapps.io/
+2. Build your Shiny app.
+3. Publish your app
+
+What you get with a free account:  
+- 5 active applications
+- 25 hours per month of active use
+
+---
+## Structure
+Two file structure is recommended for more complex applications.   
+Each app is a directory that contains:
+
+
+&lt;img src="images/structure.png" width="40%" style="display: block; margin: auto;" /&gt;
+---
+## CSS, JS &amp; Images
+
+1. Place the file in the www subdirectory
+2. Link to it with
+
+
+```r
+# CSS:
+tags$head(tags$link(rel = "stylesheet",type = "text/css", href = "&lt;file name&gt;"))
+# JS:
+tags$head(tags$script(src = "&lt;file name&gt;"))
+# Image:
+img(src="&lt;file name&gt;")
+```
+
+---
+## Layout: fluid rows
+
+```r
+ui &lt;- fluidPage(
+  fluidRow(
+    column(3,
+           wellPanel(
+             "sidebar"
+           )
+    ),
+    column(9,
+           wellPanel(
+             "main"
+           )
+    )
+  )
+)
+```
+
+&lt;img src="images/fluidrow-sidebar.png" width="100%" style="display: block; margin: auto;" /&gt;
+---
+## Layout: nested fluid rows
+.tiny[
+
+```r
+ui &lt;- fluidPage(
+  fluidRow(
+    column(width = 3, #12 columns
+           actionButton("click-a", "A", class = "btn-block"),
+           actionButton("click-b", "B", class = "btn-block")
+    ),
+    column(width = 9,
+           actionButton("click-c", "C", class = "btn-block")
+    )
+  ),
+  br(),
+  fluidRow(
+    actionButton("click-d", "D", class = "btn-block"),
+    fluidRow(
+      column(width = 6,
+             actionButton("click-E", "E", class = "btn-block")
+      ),
+      column(width = 6,
+             actionButton("click-F", "F", class = "btn-block")
+      )
+      
+    )
+  )
+)
+```
+]
+
+&lt;img src="images/fluidrow-2.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+## Layout: tabsets
+Tabsets allow to subdivide the user-interface into tabs.
+
+
+```r
+ui &lt;- fluidPage(
+  titlePanel("Tabsets"),
+  sidebarLayout(
+    sidebarPanel(
+      # Inputs excluded for brevity
+    ),
+    mainPanel(
+      tabsetPanel(
+        tabPanel("Plot", plotOutput("hist")), 
+        tabPanel("Summary", verbatimTextOutput("summary")), 
+        tabPanel("Table", tableOutput("table"))
+      )
+    )
+  )
+)
+```
+
+&lt;img src="images/tabsets.png" width="100%" style="display: block; margin: auto;" /&gt;
+---
+## Layout: navbarPage
+The navbarPage() function creates an application with a standard Bootstrap Navbar at the top.
+
+
+```r
+ui &lt;-  navbarPage("My Application",
+  tabPanel("Component 1"),
+  tabPanel("Component 2"),
+  navbarMenu("More",
+    tabPanel("Sub-Component A"),
+    tabPanel("Sub-Component B"))
+)
+```
+
+&lt;img src="images/navbar-page.png" width="100%" style="display: block; margin: auto;" /&gt;
+---
+## Layout: navlists
+A navlist presents the components as a sidebar list rather than using tabs.
+
+```r
+ui &lt;- fluidPage(
+  titlePanel("My App"),
+  navlistPanel(
+    "Header A",
+    tabPanel("Component 1", "Output 1"),
+    tabPanel("Component 2", "Output 2"),
+    "Header B",
+    tabPanel("Component 3")
+  )
+)
+```
+
+&lt;img src="images/navlist2.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+## References
+.small[
+Shiny (2019). https://shiny.rstudio.com/  
+Shiny Cheat Sheet (2014). https://shiny.rstudio.com/images/shiny-cheatsheet.pdf  
+R Shiny (2020). https://www2.stat.duke.edu/courses/Spring20/sta199.002/slides/r-shiny.html#1  
+Mastering Shiny (2020). https://mastering-shiny.org/  
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
